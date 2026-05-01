@@ -12,6 +12,7 @@
   - [8. 起動](#8-起動)
   - [9. 停止](#9-停止)
   - [10. 再起動](#10-再起動)
+  - [11. phpファイルをホスト側で編集](#11-phpファイルをホスト側で編集)
 - [VirtualBoxのインストール](#virtualboxのインストール)
   - [1. OSの更新](#1-osの更新)
   - [2. インストール](#2-インストール)
@@ -151,6 +152,45 @@ docker compose down
 
 ```bash
 docker compose restart
+```
+
+### 11. phpファイルをホスト側で編集
+
+#### 1. ホスト側に同期のためのディレクトリを作成
+
+```bash
+mkdir -p wasbook-contents/html
+```
+
+#### 2. コンテナからホストへのコピー
+
+```bash
+docker compose cp apache:/var/www/html ./wasbook-contents/
+```
+
+#### 3. docker-compose.ymlの編集
+
+docker-compose.yml の apache に volumes を追加
+
+```YAML
+apache:
+  build: apache
+  environment:
+    - MYSQL_HOST=db
+    - TZ=Asia/Tokyo
+  volumes:
+    - ./wasbook-contents/html:/var/www/html
+  ports:
+    - ${APACHE_IP:-127.0.0.1}:${APACHE_PROXY_PORT:-13128}:3128
+  networks:
+    internal:
+```
+
+#### 4. コンテナの再起動
+
+```bash
+docker compose down
+docker compose up -d
 ```
 
 ## VirtualBoxのインストール
