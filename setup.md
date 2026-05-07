@@ -31,8 +31,52 @@
 
 ### 0. 古いDockerを削除（入っている場合のみ）
 
+#### 古いDockerを削除
+
 ```bash
 sudo apt remove docker docker-engine docker.io containerd runc
+```
+
+#### 古いDockerの設定を削除
+
+##### Docker関連のAPT設定を一度全部退避
+
+```bash
+sudo mkdir -p /tmp/docker-apt-backup
+sudo mv /etc/apt/sources.list.d/*docker* /tmp/docker-apt-backup/ 2>/dev/null
+```
+
+##### 念のため `/etc/apt/sources.list` に Docker 行がないか確認
+
+```bash
+grep -n "download.docker.com" /etc/apt/sources.list
+```
+
+##### 何か表示されたら、その行を削除
+
+```bash
+sudo nano /etc/apt/sources.list
+```
+
+##### その後、Docker設定を作り直す
+
+```bash
+sudo rm -f /etc/apt/keyrings/docker.asc
+sudo rm -f /etc/apt/keyrings/docker.gpg
+
+sudo install -m 0755 -d /etc/apt/keyrings
+
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | \
+sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+
+sudo chmod a+r /etc/apt/keyrings/docker.gpg
+
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+  $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+sudo apt update
 ```
 
 ### 1. 必要なパッケージをインストール
@@ -61,10 +105,32 @@ echo \
 
 ### 4. Dockerをインストール
 
+#### 1. インストール
+
 ```bash
 sudo apt update
 sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 ```
+
+#### 2. Dockerデーモン起動
+
+```bash
+sudo systemctl start docker
+```
+
+#### 3. 自動起動を有効に
+
+```bash
+sudo systemctl enable docker
+```
+
+#### 4. 状態確認
+
+```bash
+sudo systemctl status docker
+```
+
+active (running) になっていればOK
 
 ### 5. 動作確認
 
@@ -106,6 +172,13 @@ docker compose up -d --build
 - up : 起動
 - -d : バックグラウンド起動
 - --build : build: db などの設定を使ってイメージを作り直す
+
+キャッシュをクリアしてビルドする場合は
+
+```bash
+docker compose build --no-cache
+docker compose up -d
+```
 
 #### 3. 起動確認
 
