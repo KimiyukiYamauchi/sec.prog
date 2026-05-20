@@ -327,8 +327,15 @@ docker compose up -d
 
 ### 12. 4-5 ファイルのアップロードで「Permission denied」となる件の対応
 
+#### 1. コンテナ内に入る
+
 ```bash
 docker compose exec apache bash
+```
+
+#### 2. アップロード用のディレクトリ作成、アクセス権の設定
+
+```bash
 mkdir -p /var/www/html/45/img
 chmod 777 /var/www/html/45/img
 ```
