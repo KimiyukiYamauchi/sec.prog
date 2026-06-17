@@ -352,11 +352,13 @@ sudo bash ZAP_2_17_0_unix.sh
 
 #### 登録
 
-「zap_root_ca.cer」があるディレクトリに移動し、
+ツールのインストール
 
 ```bash
 sudo apt install libnss3-tools
 ```
+
+「zap_root_ca.cer」があるディレクトリに移動し、登録
 
 ```bash
 certutil -d sql:$HOME/.pki/nssdb -A \
@@ -384,6 +386,21 @@ certutil -d sql:$HOME/.pki/nssdb -L
 ```bash
 ZAP Root CA
 ```
+
+#### 証明書の削除
+
+```bash
+certutil -d sql:$HOME/.pki/nssdb -D \
+  -n "ZAP Root CA"
+```
+
+削除されたことを確認
+
+```bash
+certutil -d sql:$HOME/.pki/nssdb -L
+```
+
+一覧から `ZAP Root CA` が消えていれば成功です。
 
 ## VirtualBoxのインストール
 
