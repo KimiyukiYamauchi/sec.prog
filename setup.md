@@ -23,10 +23,11 @@
   - [4. 設定](#4-設定)
   - [5. 使用方法](#5-使用方法)
   - [6. サーバ証明書の設定](#6-サーバ証明書の設定)
-- [VirtualBoxのインストール](#virtualboxのインストール)
-  - [1. OSの更新](#1-osの更新)
+- [Nmapのインストール](#nmapのインストール)
+  - [1. パッケージ情報を更新](#1-パッケージ情報を更新)
   - [2. インストール](#2-インストール)
-  - [3. 起動](#3-起動)
+  - [3. インストール確認](#3-インストール確認)
+  - [4. 動作確認](#4-動作確認)
 
 <!-- /TOC -->
 
@@ -402,23 +403,30 @@ certutil -d sql:$HOME/.pki/nssdb -L
 
 一覧から `ZAP Root CA` が消えていれば成功です。
 
-## VirtualBoxのインストール
+## Nmapのインストール
 
-### 1. OSの更新
+### 1. パッケージ情報を更新
 
 ```bash
 sudo apt update
-sudo apt upgrade
 ```
 
 ### 2. インストール
 
 ```bash
-sudo apt install virtualbox
+sudo apt install nmap
 ```
 
-### 3. 起動
+### 3. インストール確認
 
 ```bash
-virtualbox
+nmap --version
+```
+
+### 4. 動作確認
+
+ローカルホストをスキャンします。
+
+```bash
+nmap 127.0.0.1
 ```
